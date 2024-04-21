@@ -1,11 +1,15 @@
 // importing the pacakages(express)
 const express = require("express");
 // const mongoose = require("mongoose");
+
 const connectDatabase = require("./database/database");
-const dotenv = require("dotenv")
+const dotenv = require("dotenv");
 
 // Creating an express application
 const app = express();
+
+// Express JSON config
+app.use(express.json());
 
 // Connecting  to Database
 connectDatabase();
