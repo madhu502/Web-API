@@ -5,8 +5,18 @@ const express = require("express");
 const connectDatabase = require("./database/database");
 const dotenv = require("dotenv");
 
+const cors = require("cors");
+
 // Creating an express application
 const app = express();
+
+//Configure cors policy
+const corsOptions = {
+  origin: true,
+  credentials: true,
+  optionSuccessStatus: 200,
+};
+app.use(cors(corsOptions));
 
 // Express JSON config
 app.use(express.json());
@@ -15,7 +25,7 @@ app.use(express.json());
 connectDatabase();
 
 // dotenv configuration
-dotenv.config()
+dotenv.config();
 
 //Defining the port
 const PORT = process.env.PORT;
@@ -30,7 +40,7 @@ app.get("/test", (req, res) => {
 
 // Configuring Routes of User
 
-app.use('/api/user', require('./routes/userRoutes'))
+app.use("/api/user", require("./routes/userRoutes"));
 
 // http://localhost5000/api/user/create
 
