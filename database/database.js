@@ -5,6 +5,7 @@ const mongoose = require('mongoose')
 // Make a unique function name
 // Export
 
+//connecting datbase
 const connectDatabase = () => {
     mongoose.connect('mongodb+srv://test:test@cluster0.vn8gbyh.mongodb.net/').then(()=>{
         console.log("Database connected!")
