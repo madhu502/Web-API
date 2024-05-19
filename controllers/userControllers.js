@@ -1,5 +1,6 @@
 const userModel = require("../models/userModel");
-const bcrypt = require('bcrypt')
+const bcrypt = require("bcrypt");
+const jwt = require ('jsonwebtoken')
 
 const createUser = async (req, res) => {
   // 1. Check incoming data
@@ -25,17 +26,14 @@ const createUser = async (req, res) => {
     // 5.1. if user found : Send response
     if (existingUser) {
       return res.json({
-        status: false,
+        success: false,
         message: "User Already Exists!",
       });
     }
 
     // Hashing /Encryption of the password
-    const randomSalt = await bcrypt.genSalt(10)
-    const hashedPassword = await bcrypt.hash(password, randomSalt)
-
-
-
+    const randomSalt = await bcrypt.genSalt(10);
+    const hashedPassword = await bcrypt.hash(password, randomSalt);
 
     //5.1.1. stop the process
     //5.2 if user is new :
@@ -72,51 +70,66 @@ const createUser = async (req, res) => {
 // 5. verification of user data in database:
 
 const loginUser = async (req, res) => {
+  // res.send("Login API is working");
+
+  // check incoming data
+  console.log(req.body);
+
   // 2. Destructure the incoming data
   const { email, password } = req.body;
 
-  // 3. Validation of data (if empty, stop the process and send response)
+  // 3. validation
   if (!email || !password) {
     return res.json({
       success: false,
-      message: "Please enter both email and password!",
+      message: "please enter all fields!",
     });
   }
-
-  // 4. Error handling (Try Catch)
+  //4. try catch
   try {
-    // 5. Verification of user data in the database
+    //find user(email)
     const user = await userModel.findOne({ email: email });
 
-    // 5.1. Check if user exists
+    //found data: firstname , lastname, password, email
+
+    //not found(error messgae)
     if (!user) {
       return res.json({
         success: false,
-        message: "User not found!",
+        message: "User does not exists!",
       });
     }
-    // 5.2. Compare passwords
-    if (password !== user.password) {
+
+    //compare password(bcrypt)
+    const isValidPassword = await bcrypt.compare( password, user.password )
+
+    //not valid password(error)
+    if (!isValidPassword) {
       return res.json({
         success: false,
-        message: "Incorrect password!",
+        message: "Password not matched!",
       });
     }
-    // 5.3. If user found and password matched, send success response
+
+    // token (generate with user data + key)
+    const token = await jwt.sign(
+      { id:user._id },
+      process.env.JWT_SECRET
+    )
+
+    //response (token, user data)
     res.json({
-      success: true,
-      message: "Login successful!",
-      user: {
-        firstName: user.firstName,
-        lastName: user.lastName,
-        email: user.email,
-      },
-    });
+      "success":true,
+      "message":"User Loggedin successfully",
+      "token":token,
+      "userData" :user
+
+    })
   } catch (error) {
     console.log(error);
-    res.json({
+    return res.json({
       success: false,
-      message: "Internal server error!",
+      message: "Internal server error",
     });
   }
 };
