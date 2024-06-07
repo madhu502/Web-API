@@ -6,6 +6,7 @@ const connectDatabase = require("./database/database");
 const dotenv = require("dotenv");
 
 const cors = require("cors");
+const acceptFormData = require("express-fileupload");
 
 // Creating an express application
 const app = express();
@@ -20,6 +21,12 @@ app.use(cors(corsOptions));
 
 // Express JSON config
 app.use(express.json());
+
+//Config form data
+app.use(acceptFormData());
+
+//Make a static public folder
+app.use(express.static("./public"));
 
 // Connecting  to Database
 connectDatabase();
@@ -41,6 +48,8 @@ app.get("/test", (req, res) => {
 // Configuring Routes of User
 
 app.use("/api/user", require("./routes/userRoutes"));
+
+app.use("/api/product", require("./routes/productRoutes"));
 
 // http://localhost5000/api/user/create
 
