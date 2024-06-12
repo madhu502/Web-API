@@ -7,7 +7,7 @@ const mongoose = require('mongoose')
 
 //connecting datbase
 const connectDatabase = () => {
-    mongoose.connect('mongodb+srv://test:test@cluster0.vn8gbyh.mongodb.net/').then(()=>{
+    mongoose.connect('mongodb://localhost:27017/web').then(()=>{
         console.log("Database connected!")
     })
 }
