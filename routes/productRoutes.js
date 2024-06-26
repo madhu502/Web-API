@@ -24,4 +24,7 @@ router.delete(
 // update product
 router.put("/update_product/:id", adminGuard, productController.updateProduct);
 
+//pagination quer params ?page=1
+router.get("/pagination", authGuard, productController.paginationProducts);
+
 module.exports = router;

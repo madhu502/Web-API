@@ -215,10 +215,55 @@ const updateProduct = async (req, res) => {
   }
 };
 
+//Pagination
+const paginationProducts = async (req, res)=>{
+
+
+  //page no
+  const pageNo = req.query.page || 1;
+
+  //result per page 
+  const resultPerPage = 2;
+
+  try {
+    //find all products, skip, limit
+    const products = await productModel.find({})
+    .skip((pageNo-1)*resultPerPage)
+    .limit(resultPerPage)
+
+    //if page 6 is requested, result 0
+    if(products.length === 0){
+      res.status(400).json({
+        success: false,
+        message: "No products found"
+      })
+    }
+
+    //response
+    res.status(201).json({
+      success: true,
+      message: "Product Fetched",
+      products:products,
+    })
+
+
+    
+  } catch (error) {
+    console.log(error)
+    res.status(500).json({
+      success: false,
+      message: "Internal server error",
+    })
+    
+  }
+
+}
+
 module.exports = {
   createProduct,
   getAllProducts,
   getSingleProduct,
   deleteProduct,
   updateProduct,
+  paginationProducts,
 };
